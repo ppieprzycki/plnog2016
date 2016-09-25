@@ -1,0 +1,5 @@
+---
+- name: "Building configuration - BGP role"
+  template: src={{os}}/bgp.j2 dest={{baseconfdir.path}}/1_bgp.out
+  tags: build
+  changed_when: False

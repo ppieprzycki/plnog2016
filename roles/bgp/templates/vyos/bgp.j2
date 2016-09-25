@@ -1,0 +1,49 @@
+{% if bgp_config is defined %}
+policy {
+    prefix-list EXPORT {
+{% if bgp_redistribute_static is defined -%}
+{% for sroute in bgp_redistribute_static -%}
+        rule {{ loop.index }} {
+            action permit
+            prefix {{sroute}}
+        }
+{% endfor %}
+{% endif %}
+        rule 65535 {
+            action permit
+            prefix {{loopback}}
+        }
+    }
+    route-map EXPORT-POLICY {
+        rule 1 {
+            action permit
+            match {
+                ip {
+                    address {
+                        prefix-list EXPORT
+                    }
+                }
+            }
+        }
+    }
+}
+protocols {
+    bgp {{bgp_config.as}} {
+
+{% for neighbor in bgp_neighbors -%}
+        neighbor {{neighbor}} {
+            remote-as {{bgp_neighbors[neighbor].remote_as}}
+            route-map {
+                export EXPORT-POLICY
+            }
+        }
+{% endfor %}
+
+        redistribute {
+            connected {
+                route-map EXPORT-POLICY
+            }
+        }
+    }
+}
+{% endif %}

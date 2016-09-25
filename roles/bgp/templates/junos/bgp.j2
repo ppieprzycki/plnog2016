@@ -1,0 +1,47 @@
+{% if bgp_config is defined %}
+
+routing-options {
+    autonomous-system 65001;
+}
+protocols {
+    bgp {
+        traceoptions {
+            file trace size 5m files 2;
+        }
+        group ebgp {
+            type external;
+{% for neighbor in bgp_neighbors -%}
+            neighbor {{neighbor}} {
+                peer-as {{bgp_neighbors[neighbor].remote_as}};
+                export EXPORT-POLICY;
+            }
+{% endfor %}
+
+        }
+    }
+}
+policy-options {
+    policy-statement EXPORT-POLICY {
+        term loopback {
+            from protocol direct;
+            from route-filter {{loopback}} exact;
+            then accept;
+        }
+{% if bgp_redistribute_static is defined -%}
+{% for sroute in bgp_redistribute_static -%}
+        term {{ loop.index }} {
+            from protocol direct;
+            from route-filter {{sroute}} exact;
+            then accept;
+        }
+{% endfor %}
+{% endif %}
+        term other {
+            then reject;
+        }
+    }
+}
+
+
+
+{% endif %}

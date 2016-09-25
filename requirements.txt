@@ -1,0 +1,5 @@
+# vagrant plugin list
+vagrant-host-shell (0.0.4)
+vagrant-junos (0.2.1)
+vagrant-share (1.1.5, system)
+vagrant-vyos (1.1.0)

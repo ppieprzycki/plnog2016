@@ -1,0 +1,100 @@
+---
+# test playbook
+- name: Prepare dirs
+  hosts: citest
+  gather_facts: no
+  connection: local
+
+  tasks:
+  - name: Remove old config
+    file: path={{ playbook_dir }}/compiled/{{ inventory_hostname }} state=absent
+    register: baseconfdir
+    tags: build
+    changed_when: False
+
+  - name: Create empty
+    file: >
+      path={{ playbook_dir }}/compiled/{{ inventory_hostname }} state=directory
+    tags: build
+    changed_when: False
+
+  - name: Remove old log directory
+    file: path={{ playbook_dir }}/logs/{{ inventory_hostname }} state=absent
+    register: baselogdir
+    tags: build
+    changed_when: False
+
+  - name: Create empty log dir
+    file: path={{ playbook_dir }}/logs/{{ inventory_hostname }} state=directory
+    tags: build
+    changed_when: False
+
+  - name: Static configs directory
+    file: path={{ playbook_dir }}/staticfiles state=directory
+    register: basestaticdir
+    tags: build
+    changed_when: False
+
+
+- name: Generate configs for vyos
+  hosts: citest
+  gather_facts: no
+  connection: local
+  tags: build
+
+  roles:
+  - system
+  - bgp
+
+
+- name: Assemble and Generate configuration
+  hosts: citest
+  connection: local
+  gather_facts: no
+  tags: compile
+
+  tasks:
+  - name: Assemble configuration
+    assemble: >
+      src={{ playbook_dir }}/compiled/{{ inventory_hostname }}
+      dest={{ playbook_dir }}/compiled/{{ inventory_hostname }}/running.conf
+    changed_when: False
+
+
+- name: device config
+  hosts: civyos
+  gather_facts: no
+  tags: deploy
+
+  tasks:
+  - name: Push vyos config
+    template: >
+      src=compiled/{{ inventory_hostname }}/running.conf
+      dest=/var/tmp/running.conf
+    register: configpush
+  - name: Push config
+    template: >
+      src=templates/vyos_load_config.j2
+      dest=/var/tmp/vyos_load_config.sh mode=0755
+  - name: Apply configuration
+    command: /var/tmp/vyos_load_config.sh
+    when: not inventory_hostname == "localhost" and configpush.changed
+
+- name: Push Juniper config
+  hosts: cijun
+  roles:
+  - Juniper.junos
+  connection: local
+  gather_facts: no
+  tags: deploy
+  tasks:
+  - name: PUSH CONFIG
+    junos_install_config: >
+      host={{ansible_ssh_host}}
+      port={{ansible_ssh_port}}
+      user={{ ansible_ssh_user }}
+      passwd={{ ansible_ssh_password }}
+      file=compiled/{{inventory_hostname}}/running.conf
+      overwrite=true
+      logfile=logs/{{inventory_hostname}}/{{inventory_hostname}}.log
+      diffs_file=logs/{{inventory_hostname}}/{{inventory_hostname}}.diff

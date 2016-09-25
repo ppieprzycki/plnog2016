@@ -1,0 +1,20 @@
+---
+- name: Check Juniper BGP Sessions
+  hosts: [cijun, civyos]
+  connection: local
+  gather_facts: no
+  tags: check
+  tasks:
+    - name: get bgp neighbors from device
+      napalm_get_facts:
+        hostname: "{{ ansible_ssh_host }}"
+        username: "{{ ansible_ssh_user }}"
+        password: "{{ ansible_ssh_password | default('vagrant') }}"
+        dev_os: "{{ os }}"
+        optional_args: "{'port':{{ansible_ssh_port}}}"
+        filter: 'bgp_neighbors'
+      register: bgp_neighbors.ansible_facts.bgp_neighbors
+    - name: Check BGP Status
+      check_bgp_status:
+        device_name: "{{ inventory_hostname }}"
+        bgp_neighbors: "{{ bgp_neighbors }}"

@@ -1,0 +1,21 @@
+---
+os: junos
+interfaces:
+  'ge-0/0/2':
+    address: '172.16.1.1/24'
+  'ge-0/0/3':
+    address: '10.0.12.1/24'
+  'ge-0/0/4':
+    address: '10.0.13.1/24'
+loopback: '10.1.1.1/32'
+bgp_config:
+  as: '65001'
+bgp_neighbors:
+  '10.0.12.2':
+    remote_as: '65002'
+  '10.0.13.3':
+    remote_as: '65003'
+bgp_redistribute_static:
+  - '172.16.1.0/24'
+  - '10.0.12.0/24'
+  - '10.0.13.0/24'

@@ -1,0 +1,13 @@
+---
+os: vyos
+
+interfaces:
+  'eth1':
+    address: '10.0.13.3/24'
+
+loopback: '10.3.3.3/32'
+bgp_config:
+  as: '65003'
+bgp_neighbors:
+  '10.0.13.1':
+    remote_as: '65001'
