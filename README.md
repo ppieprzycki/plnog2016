@@ -1,5 +1,8 @@
 # Demo PLNOG 2016
 
+Video: https://www.youtube.com/watch?v=Rj54yV_99yA&t=1378s
+Slides: http://www.slideshare.net/dreamlab/continuous-integration-w-konfiguracji-urzdze-sieciowych
+
 Polecam poniższe strony jeżeli szukasz dodatkowych informacji: 
 - https://pynet.twb-tech.com 
 - https://www.dravetech.com/
