@@ -16,6 +16,5 @@ Dodatkowa Informacja:
 Konfiguracja systemów odbywa się za pomocą anisble z użyciem modułów:
 - Juniper 
 - Vyos: file + uruchomienie skryptu na zdalnym systemie. 
-System Junos można konfigurować również  za pomocą  modułu z biblioteki Napalm. 
-W niedługim czasie również będzie możlwiwe przesłanie  konfiguracji wdla VyOS  formie  wykorzystanej na prezentacji za pomocą Napalm  
 
+playbook_napalm.yml - konfiguracja junos & vyos za pomocna biblioteki napalm
