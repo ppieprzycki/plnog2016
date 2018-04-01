@@ -29,12 +29,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
  
 
   config.vm.define :"vyos2" do |vyos2|
-    vyos2.vm.box = "higebu/vyos-1.1.7-amd64"
+    vyos2.vm.box = "higebu/vyos"
+    vyos2.vm.box_version = "1.1.7"
     vyos2.vm.network "private_network", ip: "10.0.12.2", virtualbox__intnet: "network2"
   end
 
   config.vm.define :"vyos3" do |vyos3|
-    vyos3.vm.box = "higebu/vyos-1.1.7-amd64"
+    vyos3.vm.box = "higebu/vyos"
+    vyos3.vm.box_version = "1.1.7"
     vyos3.vm.network "private_network", ip: "10.0.13.3", virtualbox__intnet: "network3"
   end
 
