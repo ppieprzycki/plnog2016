@@ -3,6 +3,7 @@
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
+Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
 
 $script_vm1 = <<SCRIPT
 sudo ip route add 10.0.0.0/8 via 172.16.1.1
